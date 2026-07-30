@@ -21,7 +21,8 @@ pipeline
         {
             steps
             {
-                deploy adapters: [tomcat9(alternativeDeploymentContext: '', credentialsId: '0f046bc3-6b40-401e-aafb-e3ac0ce0a4cf', path: '', url: 'http://172.31.20.1:8080')], contextPath: 'mytestapp', war: '**/*.war'
+                sh 'scp -o StrictHostKeyChecking=no webapp/target/webapp.war ubuntu@172.31.20.1:/tmp/'
+                sh 'ssh -o StrictHostKeyChecking=no ubuntu@172.31.20.1 "sudo mv /tmp/webapp.war /var/lib/tomcat10/webapps/testapp.war"'
             }
         }
         stage('conTesting')
