@@ -37,6 +37,7 @@ pipeline
             steps
             {
                 sh 'scp /var/lib/jenkins/workspace/DeclarativePipeline2/webapp/target/webapp.war ubuntu@172.31.17.13:/var/lib/tomcat10/webapps/prodapp.war'
+            }
         }
     }
 }
