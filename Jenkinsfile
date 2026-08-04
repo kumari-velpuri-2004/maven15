@@ -1,43 +1,59 @@
+@Library('mylibrary')_
 pipeline
 {
     agent any
     stages
     {
-        stage('conDownload')
+        stage('Download_Master')
         {
             steps
             {
-                git 'https://github.com/IntelliqDevops/maven.git'
+                script
+                {
+                    cicd.gitDownload("maven15")
+                }
             }
         }
-        stage('conBuild')
+        stage('Build_Master')
         {
             steps
             {
-                sh 'mvn package'
+                script
+                {
+                    cicd.buildArtifact()
+                }
             }
         }
-        stage('conDeployment')
+        stage('Deploy_Master')
         {
             steps
             {
-                deploy adapters: [tomcat9(alternativeDeploymentContext: '', credentialsId: '0f046bc3-6b40-401e-aafb-e3ac0ce0a4cf', path: '', url: 'http://172.31.20.1:8080')], contextPath: 'mytestapp', war: '**/*.war'
+                script
+                {
+                    cicd.deployTomcat("DeclarativePipelinewithSharedLibraries","172.31.20.1","testapp")
+                }
             }
         }
-        stage('conTesting')
+        stage('Testing_Master')
         {
             steps
             {
-                git 'https://github.com/IntelliqDevops/FunctionalTesting.git'
-                sh 'java -jar /var/lib/jenkins/workspace/DeclarativePipeline1/testing.jar'
+                script
+                {
+                    cicd.gitDownload("FunctionalTesting")
+                    cicd.runSelenium("DeclarativePipelinewithSharedLibraries")
+                }
             }
         }
-        stage('conDelivery')
+        stage('Delivery_Master')
         {
             steps
             {
-                deploy adapters: [tomcat9(alternativeDeploymentContext: '', credentialsId: '0f046bc3-6b40-401e-aafb-e3ac0ce0a4cf', path: '', url: 'http://172.31.17.13:8080')], contextPath: 'myprodapp', war: '**/*.war'
-             }
+                script
+                {
+                    cicd.deployTomcat("DeclarativePipelinewithSharedLibraries","172.31.17.13","prodapp")
+                }
+            }
         }
     }
-}
+}}
